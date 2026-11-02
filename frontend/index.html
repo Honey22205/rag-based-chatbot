@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0a101b" />
+    <meta name="description" content="Ask questions about your PDFs with a private, local AI assistant." />
+    <title>RAG Studio — Document Chat</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <script src="/static/app.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <main class="main-content">
+        <div class="page-content">
+          <section class="intro">
+            <h1>Chat with your <span>PDF.</span></h1>
+            <p>Upload a PDF to get started. Follow its progress, then ask questions.</p>
+          </section>
+
+          <section class="upload-panel" id="upload-panel" aria-labelledby="upload-heading">
+            <div class="upload-heading">
+              <span class="upload-step">01</span>
+              <div><h2 id="upload-heading">Start by adding your document</h2><p>Choose a PDF from your device to begin.</p></div>
+            </div>
+            <label class="upload-zone" id="drop-zone" for="pdf-input">
+              <span class="upload-icon">↑</span>
+              <strong>Drag your PDF here</strong>
+              <span class="upload-or">or</span>
+              <span class="browse-button">Choose a PDF</span>
+              <small>PDF files up to 50 MB</small>
+              <input id="pdf-input" type="file" accept=".pdf,application/pdf" />
+            </label>
+            <div class="privacy-caption"><span>⌑</span> Your file is processed locally and stays on this device.</div>
+          </section>
+
+          <section class="document-overview hidden" id="document-overview">
+            <div class="overview-file"><span class="overview-icon">PDF</span><span><small>YOUR DOCUMENT</small><strong id="overview-name"></strong></span></div>
+            <div class="overview-stat"><strong id="page-count">—</strong><small>Pages</small></div>
+            <div class="overview-stat"><strong id="chunk-count">—</strong><small>Searchable sections</small></div>
+            <div class="overview-stat"><strong id="overview-size">—</strong><small>File size</small></div>
+            <button class="replace-button" id="replace-file" type="button">↻ <span>Change PDF</span></button>
+          </section>
+
+          <section class="processing-panel hidden" id="processing-panel" aria-live="polite">
+            <div class="processing-top"><span class="processing-spinner"></span><span><strong id="processing-title">Preparing your PDF</strong><small id="processing-message">Getting things ready...</small></span><span class="processing-percent" id="processing-percent"></span></div>
+            <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+          </section>
+
+          <section class="pipeline-section hidden" id="pipeline-section" aria-labelledby="pipeline-heading">
+            <div class="pipeline-heading"><h2 id="pipeline-heading">Processing progress</h2><span class="pipeline-hint" id="pipeline-hint">Starting...</span></div>
+            <div class="pipeline">
+              <article class="pipeline-step" data-step="read"><span class="step-icon">▤</span><span class="step-copy"><strong>Read</strong><small>Extract text</small></span><span class="step-state">Waiting</span></article>
+              <span class="pipeline-connector"></span>
+              <article class="pipeline-step" data-step="split"><span class="step-icon">⫶</span><span class="step-copy"><strong>Split</strong><small>Make sections</small></span><span class="step-state">Waiting</span></article>
+              <span class="pipeline-connector"></span>
+              <article class="pipeline-step" data-step="embed"><span class="step-icon">◉</span><span class="step-copy"><strong>Index</strong><small>Make searchable</small></span><span class="step-state">Waiting</span></article>
+              <span class="pipeline-connector"></span>
+              <article class="pipeline-step" data-step="retrieve"><span class="step-icon">⌕</span><span class="step-copy"><strong>Find</strong><small>Relevant pages</small></span><span class="step-state">Waiting</span></article>
+              <span class="pipeline-connector"></span>
+              <article class="pipeline-step" data-step="answer"><span class="step-icon">✧</span><span class="step-copy"><strong>Answer</strong><small>With sources</small></span><span class="step-state">Waiting</span></article>
+            </div>
+          </section>
+
+          <section class="chat-section hidden" id="chat-section" aria-labelledby="chat-heading">
+            <div class="chat-heading">
+              <div><span class="section-kicker">YOUR CONVERSATION</span><h2 id="chat-heading">What would you like to know?</h2></div>
+              <button class="text-button hidden" id="clear-chat" type="button">Clear chat</button>
+            </div>
+            <div class="chat-area" id="chat-area">
+              <div class="welcome-card" id="welcome-card">
+                <span class="welcome-icon">✦</span>
+                <div><strong>Your PDF is ready.</strong><p>Ask a question to get started. Answers include the page passages they came from.</p></div>
+                <div class="suggestion-row"><button class="suggestion" data-question="Who is the author?" type="button">Who is the author?</button><button class="suggestion" data-question="What is the main idea?" type="button">What is the main idea?</button></div>
+              </div>
+              <div class="messages" id="messages"></div>
+            </div>
+            <form class="chat-form" id="chat-form">
+              <textarea id="question-input" rows="1" placeholder="Ask a question about your PDF..." disabled aria-label="Ask your document"></textarea>
+              <div class="composer-bottom"><span class="composer-hint">Press <kbd>Enter</kbd> to send <span class="hint-divider">·</span> <kbd>Shift + Enter</kbd> for a new line</span><button class="send-button" id="send-button" type="submit" disabled><span>Ask question</span><span class="send-arrow">↗</span></button></div>
+            </form>
+            <p class="disclaimer">AI can make mistakes. Check the cited pages to verify important details.</p>
+          </section>
+        </div>
+      </main>
+      <div class="toast hidden" id="toast" role="status"></div>
+    </div>
+  </body>
+</html>
